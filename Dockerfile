@@ -28,8 +28,9 @@ RUN apt-get update && apt-get install -y \
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
 
-# Install libcsdr
-RUN git clone --depth 1 https://github.com/jketterl/csdr.git /tmp/csdr && \
+# Install libcsdr (use a stable version)
+RUN git clone --depth 1 --branch v0.18.2 https://github.com/jketterl/csdr.git /tmp/csdr || \
+    (git clone https://github.com/jketterl/csdr.git /tmp/csdr && cd /tmp/csdr && git checkout v0.18.2) && \
     cd /tmp/csdr && \
     mkdir -p build && \
     cd build && \
@@ -40,11 +41,10 @@ RUN git clone --depth 1 https://github.com/jketterl/csdr.git /tmp/csdr && \
     cd / && \
     rm -rf /tmp/csdr
 
-# Install pycsdr (clone full repo to get latest features)
-RUN git clone https://github.com/jketterl/pycsdr.git /tmp/pycsdr && \
+# Install pycsdr (use matching version)
+RUN git clone --depth 1 --branch v0.18.2 https://github.com/jketterl/pycsdr.git /tmp/pycsdr || \
+    (git clone https://github.com/jketterl/pycsdr.git /tmp/pycsdr && cd /tmp/pycsdr && git checkout v0.18.2) && \
     cd /tmp/pycsdr && \
-    # Use latest main branch
-    git checkout main 2>/dev/null || git checkout master && \
     python3 setup.py install && \
     rm -rf /tmp/pycsdr
 
