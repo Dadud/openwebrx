@@ -1,6 +1,13 @@
 from csdr.chain import Chain
-from pycsdr.modules import AudioResampler, Convert, AdpcmEncoder, Limit, NoiseFilter
+from pycsdr.modules import AudioResampler, Convert, AdpcmEncoder, Limit
 from pycsdr.types import Format
+
+# Try to import NoiseFilter, make it optional if not available
+try:
+    from pycsdr.modules import NoiseFilter
+    HAS_NOISE_FILTER = True
+except ImportError:
+    HAS_NOISE_FILTER = False
 
 
 class Converter(Chain):
@@ -10,8 +17,11 @@ class Converter(Chain):
         # so if we need to resample or remove noise, we need to convert
         if (inputRate != clientRate or nrEnabled) and format != Format.FLOAT:
             workers += [Convert(format, Format.FLOAT)]
-        if nrEnabled:
+        if nrEnabled and HAS_NOISE_FILTER:
             workers += [NoiseFilter(nrThreshold)]
+        elif nrEnabled:
+            # Noise filter not available, skip it (noise reduction won't work)
+            pass
         if inputRate != clientRate:
             workers += [AudioResampler(inputRate, clientRate), Limit(), Convert(Format.FLOAT, Format.SHORT)]
         elif format != Format.SHORT:
