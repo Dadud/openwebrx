@@ -1,0 +1,43 @@
+.error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.error-content {
+  background: var(--bg-panel);
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 500px;
+  border: 1px solid var(--border);
+}
+
+.error-content h2 {
+  margin-bottom: 1rem;
+  color: #ff4444;
+}
+
+.error-content p {
+  margin-bottom: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.error-content button {
+  background: var(--accent);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.error-content button:hover {
+  background: var(--accent-hover);
+}
+

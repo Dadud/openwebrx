@@ -1,0 +1,23 @@
+.waterfall-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  background: #000;
+}
+
+.waterfall-frequency-container {
+  position: relative;
+  height: 120px;
+  min-height: 120px;
+  border-bottom: 1px solid var(--border);
+}
+
+.waterfall-canvas-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  cursor: crosshair;
+}
+

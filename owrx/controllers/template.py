@@ -37,7 +37,18 @@ class WebpageController(TemplateController):
 
 class IndexController(WebpageController):
     def indexAction(self):
-        self.serve_template("index.html", **self.template_variables())
+        # Try to serve new React UI, fallback to legacy UI
+        import os
+        import pkg_resources
+        webui_index = pkg_resources.resource_filename("htdocs", "static/webui/index.html")
+        if os.path.exists(webui_index):
+            # Serve the new React UI
+            from owrx.controllers.webui import WebUIController
+            webui_controller = WebUIController(self.handler, self.request, {})
+            webui_controller.indexAction()
+        else:
+            # Fallback to legacy UI
+            self.serve_template("index.html", **self.template_variables())
 
 
 class MapController(WebpageController):

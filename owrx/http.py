@@ -9,6 +9,7 @@ from owrx.controllers.file import FilesController, FileController
 from owrx.controllers.clients import ClientController
 from owrx.controllers.services import ServiceController
 from owrx.controllers.settings import SettingsController
+from owrx.controllers.webui import WebUIController
 from owrx.controllers.settings.general import GeneralSettingsController
 from owrx.controllers.settings.sdr import (
     SdrDeviceListController,
@@ -90,6 +91,9 @@ class RegexRoute(Route):
 class Router(object):
     def __init__(self):
         self.routes = [
+            # New React UI - serve from webui build (must be before root route for SPA routing)
+            RegexRoute("^/webui/(.+)$", WebUIController),
+            RegexRoute("^/webui$", WebUIController),
             StaticRoute("/", IndexController),
             StaticRoute("/robots.txt", RobotsController),
             StaticRoute("/status.json", StatusController),
