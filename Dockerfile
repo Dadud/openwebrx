@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     libfftw3-dev \
     libliquid-dev \
+    libsamplerate0-dev \
     git \
     nodejs \
     npm \
