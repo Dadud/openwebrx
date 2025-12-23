@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { wsAPI, BINARY_SPECTRUM } from '../api/websocket'
+import { wsAPI } from '../api/websocket'
+import { BINARY_SPECTRUM } from '../api/types'
 import { useReceiverStore } from '../store/receiverStore'
 
 interface SpectrumCanvasProps {
@@ -11,9 +12,6 @@ interface SpectrumCanvasProps {
 
 export default function SpectrumCanvas({
   fftSize,
-  bandwidth,
-  centerFreq,
-  offsetFreq,
 }: SpectrumCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const dataArrayRef = useRef<Float32Array | null>(null)

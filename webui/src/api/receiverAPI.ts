@@ -1,4 +1,4 @@
-import { wsAPI, BINARY_SPECTRUM, BINARY_AUDIO, BINARY_SECONDARY_FFT, BINARY_HD_AUDIO } from './websocket'
+import { wsAPI } from './websocket'
 import { useReceiverStore } from '../store/receiverStore'
 import { WSMessage } from './types'
 

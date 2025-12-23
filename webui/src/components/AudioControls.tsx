@@ -5,7 +5,6 @@ export default function AudioControls() {
   const volume = useReceiverStore((state) => state.volume)
   const muted = useReceiverStore((state) => state.muted)
   const squelch = useReceiverStore((state) => state.squelch)
-  const nrEnabled = useReceiverStore((state) => state.nrEnabled)
   const nrLevel = useReceiverStore((state) => state.nrLevel)
   const toggleMute = useReceiverStore((state) => state.toggleMute)
   const setVolume = useReceiverStore((state) => state.setVolume)

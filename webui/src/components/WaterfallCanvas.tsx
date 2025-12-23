@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
-import { wsAPI, BINARY_SPECTRUM } from '../api/websocket'
+import { wsAPI } from '../api/websocket'
+import { BINARY_SPECTRUM } from '../api/types'
 import { useReceiverStore } from '../store/receiverStore'
-import { useUIStore } from '../store/uiStore'
 
 interface WaterfallCanvasProps {
   fftSize: number
@@ -36,9 +36,6 @@ const getWaterfallColor = (value: number, min: number, max: number): [number, nu
 
 export default function WaterfallCanvas({
   fftSize,
-  bandwidth,
-  centerFreq,
-  offsetFreq,
 }: WaterfallCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const sceneRef = useRef<THREE.Scene | null>(null)
@@ -80,7 +77,7 @@ export default function WaterfallCanvas({
       textureData,
       fftSize,
       maxLinesRef.current,
-      THREE.RGBFormat
+      THREE.RGBAFormat
     )
     texture.minFilter = THREE.LinearFilter
     texture.magFilter = THREE.LinearFilter
@@ -200,14 +197,8 @@ export default function WaterfallCanvas({
       }
     }
 
-    // Update texture dimensions if needed
-    if (texture.width !== fftSize || texture.height !== lines) {
-      texture.image.width = fftSize
-      texture.image.height = lines
+      // Update texture (dimensions are set at creation, just update data)
       texture.needsUpdate = true
-    } else {
-      texture.needsUpdate = true
-    }
   }
 
   // Update texture when waterfall data changes

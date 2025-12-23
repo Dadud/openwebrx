@@ -1,4 +1,8 @@
-import { WSMessage, BINARY_SPECTRUM, BINARY_AUDIO, BINARY_SECONDARY_FFT, BINARY_HD_AUDIO } from './types'
+import { WSMessage } from './types'
+import { BINARY_SPECTRUM, BINARY_AUDIO, BINARY_SECONDARY_FFT, BINARY_HD_AUDIO } from './types'
+
+// Re-export binary message types
+export { BINARY_SPECTRUM, BINARY_AUDIO, BINARY_SECONDARY_FFT, BINARY_HD_AUDIO }
 
 export type WSMessageHandler = (message: WSMessage) => void
 export type BinaryMessageHandler = (type: number, data: ArrayBuffer) => void
@@ -31,6 +35,14 @@ export class WebSocketAPI {
             reject(new Error('Connection failed'))
           }
         }, 100)
+        
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          clearInterval(checkInterval)
+          if (this.ws?.readyState !== WebSocket.OPEN) {
+            reject(new Error('Connection timeout'))
+          }
+        }, 10000)
       })
     }
 
@@ -38,20 +50,52 @@ export class WebSocketAPI {
 
     return new Promise((resolve, reject) => {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-      const host = window.location.host
-      const path = window.location.pathname.endsWith('/') 
-        ? window.location.pathname + 'ws/'
-        : window.location.pathname + '/ws/'
-      const wsUrl = `${protocol}//${host}${path}`
+      let wsUrl: string
+      
+      // In dev mode (Vite dev server on port 3000), use proxy path
+      // The Vite proxy will forward to the backend
+      if (window.location.port === '3000') {
+        // Use relative path - Vite proxy will handle it
+        wsUrl = `${protocol}//${window.location.host}/ws/`
+      } else {
+        // Production mode - use the same host as the page
+        const path = window.location.pathname.endsWith('/') 
+          ? window.location.pathname + 'ws/'
+          : window.location.pathname + '/ws/'
+        wsUrl = `${protocol}//${window.location.host}${path}`
+      }
+      
+      console.log('Connecting to WebSocket:', wsUrl)
+      console.log('Current location:', window.location.href)
+      
+      // Add connection timeout
+      let connectionTimeout: ReturnType<typeof setTimeout> | null = null
+      
+      const cleanup = () => {
+        if (connectionTimeout) {
+          clearTimeout(connectionTimeout)
+          connectionTimeout = null
+        }
+      }
 
       try {
         this.ws = new WebSocket(wsUrl)
         this.ws.binaryType = 'arraybuffer'
 
+        connectionTimeout = setTimeout(() => {
+          if (this.ws && this.ws.readyState !== WebSocket.OPEN) {
+            console.error('WebSocket connection timeout')
+            this.ws.close()
+            this.isConnecting = false
+            reject(new Error(`Connection timeout after 10 seconds to ${wsUrl}. Is the backend running?`))
+          }
+        }, 10000)
+
         this.ws.onopen = () => {
+          cleanup()
           this.isConnecting = false
           this.reconnectTimeout = 1000
-          console.log('WebSocket connected')
+          console.log('WebSocket connected successfully')
           resolve()
         }
 
@@ -68,19 +112,27 @@ export class WebSocketAPI {
           }
         }
 
-        this.ws.onclose = () => {
+        this.ws.onclose = (event) => {
+          cleanup()
           this.isConnecting = false
-          console.log('WebSocket closed, reconnecting...')
-          this.scheduleReconnect()
+          console.log('WebSocket closed:', event.code, event.reason)
+          if (event.code !== 1000 && event.code !== 1006) { // Not a normal closure or abnormal closure
+            this.scheduleReconnect()
+          }
         }
 
         this.ws.onerror = (error) => {
+          cleanup()
           this.isConnecting = false
           console.error('WebSocket error:', error)
-          reject(error)
+          console.error('Failed to connect to:', wsUrl)
+          console.error('Make sure the OpenWebRX backend is running on port 8073')
+          reject(new Error(`WebSocket connection failed: ${wsUrl}. Is the backend running?`))
         }
       } catch (error) {
+        cleanup()
         this.isConnecting = false
+        console.error('Error creating WebSocket:', error)
         reject(error)
       }
     })

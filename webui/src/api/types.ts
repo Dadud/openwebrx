@@ -6,10 +6,10 @@ export interface WSMessage {
 }
 
 // Binary message types
-export const BINARY_SPECTRUM = 0x01;
-export const BINARY_AUDIO = 0x02;
-export const BINARY_SECONDARY_FFT = 0x03;
-export const BINARY_HD_AUDIO = 0x04;
+export const BINARY_SPECTRUM = 0x01
+export const BINARY_AUDIO = 0x02
+export const BINARY_SECONDARY_FFT = 0x03
+export const BINARY_HD_AUDIO = 0x04
 
 // Receiver configuration
 export interface ReceiverConfig {

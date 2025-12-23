@@ -1,5 +1,4 @@
 import { useReceiverStore } from '../store/receiverStore'
-import { receiverCommands } from '../api/receiverAPI'
 import FrequencyDisplay from './FrequencyDisplay'
 import ModeSelector from './ModeSelector'
 import ProfileSelector from './ProfileSelector'

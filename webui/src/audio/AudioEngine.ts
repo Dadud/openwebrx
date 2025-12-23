@@ -1,4 +1,5 @@
-import { wsAPI, BINARY_AUDIO, BINARY_HD_AUDIO } from '../api/websocket'
+import { wsAPI } from '../api/websocket'
+import { BINARY_AUDIO, BINARY_HD_AUDIO } from '../api/types'
 
 // Simplified IMA ADPCM decoder (minimal implementation)
 class ImaAdpcmDecoder {
