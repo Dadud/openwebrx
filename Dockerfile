@@ -40,9 +40,11 @@ RUN git clone --depth 1 https://github.com/jketterl/csdr.git /tmp/csdr && \
     cd / && \
     rm -rf /tmp/csdr
 
-# Install pycsdr
+# Install pycsdr (clone full repo to get latest features)
 RUN git clone https://github.com/jketterl/pycsdr.git /tmp/pycsdr && \
     cd /tmp/pycsdr && \
+    # Use latest main branch
+    git checkout main 2>/dev/null || git checkout master && \
     python3 setup.py install && \
     rm -rf /tmp/pycsdr
 
