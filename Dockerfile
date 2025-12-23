@@ -18,12 +18,15 @@ RUN apt-get update && apt-get install -y \
     libliquid-dev \
     libsamplerate0-dev \
     git \
-    nodejs \
-    npm \
+    curl \
     sox \
     rtl-sdr \
     librtlsdr-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 18+ (required for Vite and TypeScript 5)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
 
 # Install libcsdr
 RUN git clone --depth 1 https://github.com/jketterl/csdr.git /tmp/csdr && \
