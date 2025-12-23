@@ -25,14 +25,15 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install libcsdr
-RUN git clone https://github.com/jketterl/csdr.git /tmp/csdr && \
+RUN git clone --depth 1 https://github.com/jketterl/csdr.git /tmp/csdr && \
     cd /tmp/csdr && \
     mkdir -p build && \
     cd build && \
-    cmake .. && \
-    make && \
+    cmake .. -DCMAKE_BUILD_TYPE=Release && \
+    make -j$(nproc) && \
     make install && \
     ldconfig && \
+    cd / && \
     rm -rf /tmp/csdr
 
 # Install pycsdr
